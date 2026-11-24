@@ -11,6 +11,7 @@
 #include <lg_diag_udm.h>
 #include <lg_diagcmd.h>
 #include <lg_diag_testmode.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 
 /* ==========================================================================
 ===========================================================================*/

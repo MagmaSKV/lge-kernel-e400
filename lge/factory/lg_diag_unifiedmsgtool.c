@@ -21,6 +21,7 @@
 // BEGIN : munho.lee@lge.com 2011-01-15
 // ADD: 0013541: 0014142: [Test_Mode] To remove Internal memory information in External memory test when SD-card is not exist 
 #include <linux/gpio.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 
 extern PACK(void *) diagpkt_alloc (diagpkt_cmd_code_type code, unsigned int length);
 extern PACK(void *) diagpkt_free (PACK(void *)pkt);

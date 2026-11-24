@@ -28,6 +28,7 @@
 
 #include <linux/module.h>
 #include <linux/input.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 #include <linux/syscalls.h>
 #include <linux/delay.h>
 

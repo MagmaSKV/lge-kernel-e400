@@ -18,6 +18,7 @@
 #include <linux/err.h>
 #include <mach/oem_rapi_client.h>
 #include <lg_diag_testmode.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 #include <lg_diag_unifiedmsgtool.h> //#ifdef LG_SMS_PC_TEST
 #include <linux/slab.h>
 #include <lge_diag_eri.h>

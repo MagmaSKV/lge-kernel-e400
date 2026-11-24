@@ -18,6 +18,7 @@
 #include <linux/fb.h> /* to handle framebuffer ioctls */
 #include <linux/ioctl.h>
 #include <linux/syscalls.h> //for sys operations
+#include <asm/mach-msm/lge-board-e0eu.h>
 #endif
 
 

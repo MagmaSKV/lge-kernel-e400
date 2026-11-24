@@ -1,4 +1,5 @@
 #include "lg_diag_dload.h"
+#include <asm/mach-msm/lge-board-e0eu.h>
 
 // LG_FW : 2011.07.07 moon.yongho : saving webdload status variable to eMMC. ----------[[
 #ifdef LG_FW_WEB_DOWNLOAD
@@ -49,7 +50,7 @@ PACK (void *)LGE_WebDload_SRD(PACK (void *)req_pkt_ptr, uint16 pkg_len)
 
     static char exe_flag=0;
 
-    rsp_len = sizeof(diag_webdload_rsp_type); /* ¹«Á¶°Ç ÀÌ size·Î º¸³½´Ù´Â °¡Á¤ÀÓ */
+    rsp_len = sizeof(diag_webdload_rsp_type); /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ sizeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ù´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
     rsp_ptr = (byte*)diagpkt_alloc(DIAG_WEBDLOAD_COMMON_F  , rsp_len);
 
     if( rsp_ptr == NULL )
@@ -142,7 +143,7 @@ void webdload_common_cmd
 	    else
 		rsp_ptr->rsp_data.batt_lvl = 2;
 #else
-	    rsp_ptr->rsp_data.batt_lvl = is_batt_lvl_present();// range 0~10 È®ÀÎ ÇÏ°í ¼öÁ¤ ÇÒ°Í  
+	    rsp_ptr->rsp_data.batt_lvl = is_batt_lvl_present();// range 0~10 È®ï¿½ï¿½ ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½  
 #endif
 */
 		// [111018 dong.kim@lge.com M3_ALL] WEB Download[START]
@@ -256,7 +257,7 @@ void webdload_common_cmd
 
 		    ((status_info_type*)si_page_buffer)->language = (word)req_ptr->req_data.language;
 
-		    *lang = ((word)((status_info_type*)si_page_buffer)->language);  /* °ª È®ÀÎ ÇÒ°Í */
+		    *lang = ((word)((status_info_type*)si_page_buffer)->language);  /* ï¿½ï¿½ È®ï¿½ï¿½ ï¿½Ò°ï¿½ */
 
 		    if( *lang == WEBDLOAD_LANG_TRUST_PHONE )
 		    {
@@ -298,7 +299,7 @@ void webdload_common_cmd
 		    }/* else noraml */
 
 			rsp_ptr->success = TRUE;
-		    /* RPC·Î reset ¿äÃ» */
+		    /* RPCï¿½ï¿½ reset ï¿½ï¿½Ã» */
 		    //webDload_rpc_srd_cmmand(req_ptr, rsp_ptr); /* send req packet to  server & receive rsp_ptr  packe form server.*/
 
 		}

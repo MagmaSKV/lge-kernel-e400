@@ -45,6 +45,7 @@ Copyright (c) 2010 LG Electronics. All right reserved.
 
 // LG_FW : 2011.07.06 moon.yongho : saving webdload status variable to eMMC. ----------[[
 #include "lg_diag_cfg.h"
+#include <asm/mach-msm/lge-board-e0eu.h>
 // LG_FW : 2011.07.06 moon.yongho -----------------------------------------------------]]
 
 /*============================================================================
@@ -69,7 +70,7 @@ word  ud_page_index=0;						//CSFB SRD
 #define SRD_SECOND_AREA_INPARTITION 2  //extra nv
 #define SRD_THIRD_AREA_INPARTITION 3  //prl 
 
-#define PTN_FRST_PERSIST_OFFSET_IN_MISC_PARTITION 1    // 8192 °³ nv Áö¿ø  (1Mbyte /128 byte)
+#define PTN_FRST_PERSIST_OFFSET_IN_MISC_PARTITION 1    // 8192 ï¿½ï¿½ nv ï¿½ï¿½ï¿½ï¿½  (1Mbyte /128 byte)
 #define PTN_EXTRA_NV_PERSIST_OFFSET_IN_MISC_PARTITION 2048 //start sector number
 #define PTN_PRL_PERSIST_OFFSET_IN_MISC_PARTITION 4096  //start sector number
 
@@ -195,7 +196,7 @@ boolean userDataBackUpPartitionErase(void )
          return FALSE;
         }
 
-	//CSFB SRD  MDM ¹Û¿¡ ¾øÀ½
+	//CSFB SRD  MDM ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½
 	// srd_bytes_pos_in_emmc+0x400000  for  MDM 
 	  /*mtd_op_result = lge_erase_block(srd_bytes_pos_in_emmc+0x400000, (size_t)(SRD_1MBYTE_AREA));
 	  if(mtd_op_result != (SRD_1MBYTE_AREA*SRD_FIRST_AREA_INPARTITION))
@@ -204,7 +205,7 @@ boolean userDataBackUpPartitionErase(void )
          //  rsp_pkt->header.err_code = TEST_FAIL_S;        
          return FALSE;
         }*/
-	 //ÇöÀç 1mbyte ¸¸ Áö¿ò. ..
+	 //ï¿½ï¿½ï¿½ï¿½ 1mbyte ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. ..
 #if 0
 	int i;  
   	int start_blk;
@@ -269,7 +270,7 @@ unsigned char *buf = (char *)ram_start_address;
         }
 
 	 write_counter_sector =0;
-//todo  ??  srd_bytes_pos_in_emmc=srd_bytes_pos_in_emmc +512   ,  app ¿¡¼­´Â info¸¸ write ,,
+//todo  ??  srd_bytes_pos_in_emmc=srd_bytes_pos_in_emmc +512   ,  app ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ infoï¿½ï¿½ write ,,
 	
 	return TRUE;
 	

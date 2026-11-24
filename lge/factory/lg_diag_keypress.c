@@ -4,6 +4,7 @@
 #include <lg_diag_keypress.h>
 #include <linux/input.h>
 #include <mach/gpio.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 /*==========================================================================*/
 #define HS_RELEASE_K 0xFFFF
 #define KEY_TRANS_MAP_SIZE 77

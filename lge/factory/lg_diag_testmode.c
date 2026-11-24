@@ -1,4 +1,5 @@
 #include <linux/module.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 #include <lg_diagcmd.h>
 #include <linux/input.h>
 #include <linux/syscalls.h>
@@ -45,9 +46,6 @@
 
 static struct diagcmd_dev *diagpdev;
 
-extern PACK(void *) diagpkt_alloc (diagpkt_cmd_code_type code, unsigned int length);
-extern PACK(void *) diagpkt_free (PACK(void *)pkt);
-extern void send_to_arm9( void * pReq, void * pRsp);
 extern testmode_user_table_entry_type testmode_mstr_tbl[TESTMODE_MSTR_TBL_SIZE];
 extern int diag_event_log_start(void);
 extern int diag_event_log_end(void);
@@ -59,7 +57,6 @@ extern unsigned int LGF_KeycodeTrans(word input);
 extern void LGF_SendKey(word keycode);
 #endif
 
-extern int boot_info;
 
 extern void remote_rpc_srd_cmmand(void * pReq, void * pRsp );
 extern void *smem_alloc(unsigned id, unsigned size);
@@ -75,7 +72,6 @@ extern void diag_userDataBackUp_data(udbp_req_type *req_pkt, udbp_rsp_type *rsp_
 #define SIZE_OF_SHARD_RAM  0x60000  //384K
 
 extern int lge_erase_block(int secnum, size_t size);
-extern int lge_write_block(int secnum, unsigned char *buf, size_t size);
 extern int lge_read_block(int secnum, unsigned char *buf, size_t size);
 extern int lge_mmc_scan_partitions(void);
 
@@ -2581,8 +2577,8 @@ PACK (void *)LGE_Dload_SRD (PACK (void *)req_pkt_ptr, uint16 pkg_len)
 				
 			case USERDATA_BACKUP_REQUEST:
 				printk(KERN_WARNING "USERDATA_BACKUP_REQUEST");
-				//CSFB SRD remote Á¦°Å -> diag_userDataBackUp_data ¿¡¼­ Ã³¸®ÇÔ
-				//remote_rpc_srd_cmmand(req_ptr, rsp_ptr);  //userDataBackUpStart() ¿©±â¼­ ... shared ram ÀúÀå ÇÏµµ·Ï. .. 
+				//CSFB SRD remote ï¿½ï¿½ï¿½ï¿½ -> diag_userDataBackUp_data ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½
+				//remote_rpc_srd_cmmand(req_ptr, rsp_ptr);  //userDataBackUpStart() ï¿½ï¿½ï¿½â¼­ ... shared ram ï¿½ï¿½ï¿½ï¿½ ï¿½Ïµï¿½ï¿½ï¿½. .. 
 				diag_userDataBackUp_entrySet(req_ptr,rsp_ptr,0);  //write info data ,  after rpc respons include write_sector_counter  
 
 				//CSFB SRD
@@ -2648,9 +2644,9 @@ PACK (void *)LGE_Dload_SRD (PACK (void *)req_pkt_ptr, uint16 pkg_len)
 				 }	
 				load_srd_shard_base+=1200*256 ; //mdm ram offset 
 				
-				// CSFB remote Á¦°Å -> diag_userDataBackUp_data ¿¡¼­ Ã³¸®ÇÔ
-				//remote_rpc_srd_cmmand(req_ptr, rsp_ptr);  //userDataBackUpStart() ¿©±â¼­ ... ram ÀúÀå ÇÏµµ·Ï. .. 
-				diag_userDataBackUp_entrySet(req_ptr,rsp_ptr,1);  //write info data ,  after rpc respons include write_sector_counter  remote_rpc_srd_cmmand(req_ptr, rsp_ptr);  //userDataBackUpStart() ¿©±â¼­ ... ram ÀúÀå ÇÏµµ·Ï. .. 
+				// CSFB remote ï¿½ï¿½ï¿½ï¿½ -> diag_userDataBackUp_data ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½
+				//remote_rpc_srd_cmmand(req_ptr, rsp_ptr);  //userDataBackUpStart() ï¿½ï¿½ï¿½â¼­ ... ram ï¿½ï¿½ï¿½ï¿½ ï¿½Ïµï¿½ï¿½ï¿½. .. 
+				diag_userDataBackUp_entrySet(req_ptr,rsp_ptr,1);  //write info data ,  after rpc respons include write_sector_counter  remote_rpc_srd_cmmand(req_ptr, rsp_ptr);  //userDataBackUpStart() ï¿½ï¿½ï¿½â¼­ ... ram ï¿½ï¿½ï¿½ï¿½ ï¿½Ïµï¿½ï¿½ï¿½. .. 
 				write_size= rsp_ptr->rsp_data.write_sector_counter *256;	 //return nv backup counters  
 
 				 if( write_size >0x15000)  //384K = mode ram (300K) + mdm (80K)

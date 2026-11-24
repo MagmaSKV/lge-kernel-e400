@@ -24,6 +24,7 @@
 #include <linux/fcntl.h>
 #include <linux/slab.h>
 #include <asm/uaccess.h>
+#include <asm/mach-msm/lge-board-e0eu.h>
 
 /* BEGIN: 0013860 jihoon.lee@lge.com 20110111 */
 /* ADD 0013860: [FACTORY RESET] ERI file save */
@@ -952,7 +953,7 @@ module_param_call(read_block, param_set_bool, test_read_block, &dummy_arg, S_IWU
 */
 
 // Begin: hyechan.lee 2011-04-06
-// 0018768: [fota]Fix an issue that when VZW logo is displayed, remove battery it won¡¯t enter recovery mode 
+// 0018768: [fota]Fix an issue that when VZW logo is displayed, remove battery it wonï¿½ï¿½t enter recovery mode 
 static int fota_write_block(const char *val, struct kernel_param *kp)
 {
 
