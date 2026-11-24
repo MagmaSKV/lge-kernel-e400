@@ -26,7 +26,22 @@ jobs:
             bison \
             flex \
             libssl-dev \
-            libc6-i38e \
+            libc6-dev \
+            gcc \
+            make \
+            cmake \
+            git \
+            cpio \
+            gzip \
+            unzip \
+            wget \
+            curl \
+            libncurses5-dev \
+            libtool \
+            autoconf \
+            automake \
+            libssl-dev \
+            libffi-dev \
             lib32z1 \
             lib32stdc++6
 
