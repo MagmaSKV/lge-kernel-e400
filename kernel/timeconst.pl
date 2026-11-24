@@ -370,9 +370,7 @@ if ($hz eq '--can') {
 	}
 
 	@val = @{$canned_values{$hz}};
-	if (!scalar(@val)) {
-		@val = compute_values($hz);
-	}
+	@val = compute_values($hz) if @val;
 	output($hz, @val);
 }
 exit 0;
