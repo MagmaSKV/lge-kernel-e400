@@ -13,8 +13,8 @@
   #error No PACK() macro defined for this compiler
 #endif
 
-extern PACK(void *) diagpkt_alloc (diagpkt_cmd_code_type code, unsigned int length);
-extern PACK(void *) diagpkt_free (PACK(void *)pkt);
+extern void *diagpkt_alloc(diagpkt_cmd_code_type code, unsigned int length);
+extern void *diagpkt_free(void *pkt);
 extern void send_to_arm9(void *pReq, void *pRsp);
 extern void lge_write_block(unsigned int bytes_pos, unsigned char *buf, size_t size);
 extern int boot_info;
