@@ -1,0 +1,90 @@
+
+name: Build LG Optimus L3 E400 kernel
+
+on:
+  push:
+    branches:
+      - android-msm-2.6.38
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout kernel source
+        uses: actions/checkout@v4
+
+      - name: Install host dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            bc \
+            bison \
+            flex \
+            libssl-dev \
+            libc6-i386 \
+            lib32z1 \
+            lib32stdc++6
+
+      - name: Download ARM GCC 4.4.3
+        run: |
+          mkdir -p "$HOME/toolchain"
+          cd "$HOME/toolchain"
+
+          curl -fL --retry 3 \
+            "https://android.googlesource.com/platform/prebuilt/+archive/6c89c6601a699707500003b782406482c4c3050b/linux-x86/toolchain/arm-eabi-4.4.3.tar.gz" \
+            -o toolchain.tar.gz
+
+          tar -xzf toolchain.tar.gz
+
+          echo "$HOME/toolchain/bin" >> "$GITHUB_PATH"
+
+      - name: Check compiler
+        run: |
+          arm-eabi-gcc --version
+
+      - name: Generate kernel configuration
+        run: |
+          make ARCH=arm CROSS_COMPILE=arm-eabi- e0eu-no-emmc_defconfig
+
+      - name: Verify eMMC isolation configuration
+        run: |
+          set -e
+
+          grep -q '^CONFIG_MMC_MSM_SDC1_SUPPORT=y$' .config
+          grep -q '^CONFIG_MMC_MSM_SDC2_SUPPORT=y$' .config
+
+          ! grep -q '^CONFIG_MMC_MSM_SDC3_SUPPORT=y$' .config
+          ! grep -q '^CONFIG_LGE_FACTORY=y$' .config
+          ! grep -q '^CONFIG_LGE_EMMC_DIRECT_ACCESS=y$' .config
+
+          echo "eMMC isolation configuration verified"
+
+      - name: Build kernel
+        run: |
+          make ARCH=arm \
+            CROSS_COMPILE=arm-eabi- \
+            -j2 \
+            zImage
+
+      - name: Prepare build artifacts
+        run: |
+          mkdir -p output
+
+          cp arch/arm/boot/zImage output/
+          cp .config output/kernel-config
+
+          sha256sum output/zImage > output/SHA256SUMS
+
+      - name: Upload kernel
+        uses: actions/upload-artifact@v4
+        with:
+          name: LG-E400-no-eMMC-kernel
+          path: output/
+          if-no-files-found: error
+          retention-days: 14

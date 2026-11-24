@@ -1,0 +1,103 @@
+name: Build LG Optimus L3 E400 Kernel (SD-only)
+
+on:
+  push:
+    branches:
+      - android-msm-2.6.38
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout kernel source
+        uses: actions/checkout@v4
+
+      - name: Install host dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            bc \
+            bison \
+            flex \
+            libssl-dev \
+            libc6-i38e \
+            lib32z1 \
+            lib32stdc++6
+
+      - name: Download ARM GCC 4.4.3
+        run: |
+          mkdir -p "$HOME/toolchain"
+          cd "$HOME/toolchain"
+
+          curl -fL --retry 3 \
+            "https://android.googlesource.com/platform/prebuilt/+archive/6c89c6601a699707500003b782406482c4c3050b/linux-x86/toolchain/arm-eabi-4.4.3.tar.gz" \
+            -o toolchain.tar.gz
+
+          tar -xzf toolchain.tar.gz
+
+          echo "$HOME/toolchain/bin" >> "$GITHUB_PATH"
+
+      - name: Check compiler
+        run: |
+          arm-eabi-gcc --version
+
+      - name: Generate kernel configuration (SD-only)
+        run: |
+          make ARCH=arm CROSS_COMPILE=arm-eabi- e0eu-sd-only_defconfig
+
+      - name: Verify SD-only configuration
+        run: |
+          set -e
+
+          echo "=== Verifying SD-only configuration ==="
+          
+          echo "SDC1 (SD card):"
+          grep '^CONFIG_MMC_MSM_SDC1_SUPPORT=' .config
+          
+          echo "SDC2 (WiFi):"
+          grep '^CONFIG_MMC_MSM_SDC2_SUPPORT=' .config
+          
+          echo "SDC3 (eMMC - should be disabled):"
+          grep 'CONFIG_MMC_MSM_SDC3_SUPPORT=' .config || echo "SDC3 not found (disabled)"
+          
+          echo "Factory mode disabled:"
+          grep '^CONFIG_LGE_FACTORY=' .config || echo "Factory mode not found (disabled)"
+          
+          echo "eMMC direct access disabled:"
+          grep '^CONFIG_LGE_EMMC_DIRECT_ACCESS=' .config || echo "eMMC direct access not found (disabled)"
+          
+          echo ""
+          echo "=== Configuration verified ==="
+
+      - name: Build kernel
+        run: |
+          make ARCH=arm \
+            CROSS_COMPILE=arm-eabi- \
+            -j2 \
+            zImage
+
+      - name: Prepare build artifacts
+        run: |
+          mkdir -p output
+
+          cp arch/arm/boot/zImage output/
+          cp .config output/kernel-config
+
+          sha256sum output/zImage > output/SHA256SUMS
+          
+          echo "=== Build artifacts ==="
+          ls -la output/
+
+      - name: Upload kernel
+        uses: actions/upload-artifact@v4
+        with:
+          name: LG-E400-SD-Only-kernel
+          path: output/
+          if-no-files-found: error
+          retention-days: 14

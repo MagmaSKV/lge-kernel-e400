@@ -1,11 +1,17 @@
-# Kernel LG E400 - Instrucciones de Compilación
+# Kernel LG E400 - SD-only Build
 
 ## Estado del Kernel
 - ✅ Kernel base: 2.6.38-perf (LineageOS)
 - ✅ Commit `5f6f855bbeb`: microSD-only boot guard
 - ✅ Commit `9cbb27406e7`: eMMC controller disabled
-- ✅ Configuración: `e0eu-no-emmc_defconfig`
-- ✅ Kernel extraído del boot.img original
+- ✅ **Nuevo commit**: `e0eu-sd-only_defconfig` con SDC3 deshabilitado
+- ✅ Configuración: `e0eu-sd-only_defconfig` (SD y WiFi solo)
+
+## Configuración de Particiones SD
+- **SDC1** (mmcblk0p1): SYSTEM (label: SYSTEM)
+- **SDC2** (mmcblk0p2): DATA (label: DATA)  
+- **SDC3** (mmcblk0p3): SDCARD (label: SDCARD)
+- ✅ eMMC (SDC3) deshabilitado - no se usará
 
 ## Compilación Local
 
@@ -15,16 +21,16 @@ apt-get update
 apt-get install -y gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi
 ```
 
-### Compilar
+### Compilar con nuevo defconfig
 ```bash
 cd /tmp/e400-build/lgOpencode/lge-kernel-e400
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- e0eu-no-emmc_defconfig
-make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- e0eu-sd-only_defconfig
+make ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- -j4 zImage
 ```
 
 ### Resultado
 - `arch/arm/boot/zImage`: Kernel compilado
-- `arch/arm/boot/dts/e400.dtb`: Device tree (si existe)
+- `arch/arm/boot/dts/e400.dtb`: Device tree
 
 ## Compilación en Github Actions
 
@@ -36,7 +42,13 @@ git push -u origin android-msm-2.6.38
 ```
 
 ### Workflow de Github Actions
-El workflow ya está en `.github/workflows/build-e400.yml`
+El workflow está en `.github/workflows/build-e400.yml`
+
+Verificación automática del kernel compilado:
+- ✅ SDC1 y SDC2 habilitados
+- ✅ SDC3 deshabilitado
+- ✅ Factory mode deshabilitado
+- ✅ eMMC direct access deshabilitado
 
 ## Extraer Kernel y Ramdisk del boot.img Original
 
@@ -70,11 +82,19 @@ cd ..
 fastboot boot new_boot.img
 ```
 
-## Estructura de particiones
-- `/dev/block/mmcblk0p1`: system (UUID: 57f8f4bc-abf4-0000-675f-946fc0f9f25b)
-- `/dev/block/mmcblk0p2`: DATA (UUID: 711d2f54-8128-4155-9e9b-6b02e25c2a5f)
+## Verificar Montaje por Labels
+
+En el dispositivo LG E400:
+```bash
+mount | grep -E 'DATA|SYSTEM|SDCARD'
+# Debe mostrar:
+# /dev/block/mmcblk0p1 /data ext4 ro
+# /dev/block/mmcblk0p2 /system ext4 ro  
+# /dev/block/mmcblk0p3 /sdcard ext4 ro
+```
 
 ## Notas
 - El kernel verifica que el boot sea desde microSD (no eMMC)
 - El controlador eMMC está deshabilitado
 - Usa recovery CWM como base para pruebas
+- Sistema de archivos montado por labels (DATA, SYSTEM, SDCARD)
