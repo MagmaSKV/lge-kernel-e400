@@ -2,6 +2,17 @@
 #define __LGE_BOARD_E0EU_H
 
 /* ARM9 function declarations for DIAG */
+
+#if defined __GNUC__
+  #define PACK(x)       x __attribute__((__packed__))
+  #define PACKED        __attribute__((__packed__))
+#elif defined __arm
+  #define PACK(x)       __packed x
+  #define PACKED        __packed
+#else
+  #error No PACK() macro defined for this compiler
+#endif
+
 extern PACK(void *) diagpkt_alloc (diagpkt_cmd_code_type code, unsigned int length);
 extern PACK(void *) diagpkt_free (PACK(void *)pkt);
 extern void send_to_arm9(void *pReq, void *pRsp);
