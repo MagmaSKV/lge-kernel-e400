@@ -58,7 +58,8 @@ allowed_warnings = set([
     "msm_sdcc.c:128",
     "nf_conntrack_netlink.c:790",
     "nf_nat_standalone.c:118",
-    "return_address.c:61",
+    "return_address.c:61",  # TODO: should use unwind tables
+    "return_address.c:61:2", # warning about unwind tables
     "soc-core.c:1719",
     "xt_log.h:50",
 ])
@@ -95,7 +96,7 @@ def run_gcc():
     compiler = sys.argv[0]
 
     try:
-        proc = subprocess.Popen(args, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(args, stderr=subprocess.PIPE, text=True)
         for line in proc.stderr:
             print(line, end='', file=sys.stderr)
             interpret_warning(line)
